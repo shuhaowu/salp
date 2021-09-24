@@ -244,9 +244,9 @@ func (p *Probe) Enabled() bool {
 // this invocation should match what was described by the ProbeArgType arguments
 // originally given to the Provider.AddProbe invocation that created this Probe.
 // Cheap to invoke if the probe is not enabled (see: Enabled())
-func (p *Probe) Fire(args ...interface{}) {
+func (p *Probe) Fire(args ...interface{}) bool {
 	if !p.Enabled() || len(args) != int(p.argCount) {
-		return
+		return false
 	}
 
 	// Fire is ~28% faster (linux, x86_64, go 1,10.3) to call with no probes
@@ -256,6 +256,7 @@ func (p *Probe) Fire(args ...interface{}) {
 	// that case.
 
 	p.fireImpl(args...)
+	return true
 }
 
 func (p *Probe) fireImpl(args ...interface{}) {
